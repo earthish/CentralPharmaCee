@@ -101,14 +101,18 @@ while ($c = $cats->fetch_assoc())
                             <input type="number" step="0.01" name="price" class="form-control" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label>Supplier</label>
-                            <select name="supplier_id" class="form-select">
-                                <?php
+                            <div class="input-group">
+                                <select name="supplier_id" class="form-select" required>
+                                    <option value="">-- Select Supplier --</option>
+                                    <?php
 $sups = $conn->query("SELECT * FROM Suppliers");
-while ($s = $sups->fetch_assoc())
+while ($s = $sups->fetch_assoc()) {
     echo "<option value='{$s['supplier_id']}'>{$s['company_name']}</option>";
+}
 ?>
-                            </select>
+                                </select>
+                                <a href="add_supplier.php" class="btn btn-outline-secondary" target="_blank">+ New</a>
+                            </div>
                         </div>
                     </div>
 

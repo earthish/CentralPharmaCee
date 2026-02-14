@@ -41,17 +41,18 @@ if (!isset($_SESSION["user_id"])) {
                         </thead>
                         <tbody>
                             <?php
+// --- FIXED SQL QUERY ---
 $sql = "SELECT 
-                                        m.name AS medicine_name, 
-                                        c.name AS category_name, 
-                                        b.batch_id, 
-                                        b.expiry_date, 
-                                        b.stock_quantity, 
-                                        b.price 
-                                    FROM Batches b
-                                    JOIN Medicines m ON b.medicine_id = m.medicine_id
-                                    JOIN Categories c ON m.category_id = c.category_id
-                                    ORDER BY b.expiry_date ASC";
+            m.name AS medicine_name, 
+            c.category_name, 
+            b.batch_id, 
+            b.expiry_date, 
+            b.stock_qty, 
+            m.price_per_unit 
+        FROM Batches b
+        JOIN Medicines m ON b.med_id = m.med_id
+        JOIN Categories c ON m.category_id = c.category_id
+        ORDER BY b.expiry_date ASC";
 
 $result = $conn->query($sql);
 
@@ -59,6 +60,7 @@ if ($result && $result->num_rows > 0) {
     $today = date("Y-m-d");
 
     while ($row = $result->fetch_assoc()) {
+        // Check for expiry to highlight row
         $is_expired = ($row['expiry_date'] < $today);
         $row_class = $is_expired ? "table-danger" : "";
         $text_class = $is_expired ? "text-danger fw-bold" : "";
@@ -68,13 +70,15 @@ if ($result && $result->num_rows > 0) {
         echo "<td>" . htmlspecialchars($row['category_name']) . "</td>";
         echo "<td>" . htmlspecialchars($row['batch_id']) . "</td>";
         echo "<td class='{$text_class}'>" . htmlspecialchars($row['expiry_date']) . "</td>";
-        echo "<td>" . htmlspecialchars($row['stock_quantity']) . "</td>";
-        echo "<td>$" . number_format($row['price'], 2) . "</td>";
+        echo "<td>" . htmlspecialchars($row['stock_qty']) . "</td>";
+        echo "<td>$" . number_format($row['price_per_unit'], 2) . "</td>";
         echo "</tr>";
     }
 }
 else {
-    echo "<tr><td colspan='6' class='text-center'>No inventory found</td></tr>";
+    // If query fails or is empty, show why
+    $error = $conn->error ? $conn->error : "No inventory found";
+    echo "<tr><td colspan='6' class='text-center text-warning'>Status: $error</td></tr>";
 }
 ?>
                         </tbody>

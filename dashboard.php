@@ -38,7 +38,7 @@ $username = $_SESSION['username'] ?? 'Admin';
 <body class="bg-body-tertiary">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow mb-4">
         <div class="container">
-            <a class="navbar-brand" href="#">Pharmacy System</a>
+            <a class="navbar-brand" href="#">CentralPharmaCee</a>
             <div class="d-flex align-items-center">
                 <span class="navbar-text me-3">
                     Welcome, <strong>

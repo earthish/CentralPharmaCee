@@ -43,6 +43,7 @@ if (isset($_POST['add_user'])) {
                     <select name="role" class="form-select">
                         <option>Pharmacist</option>
                         <option>Admin</option>
+                        <option>Billing</option>
                     </select>
                 </div>
                 <div class="col-md-2"><button type="submit" name="add_user" class="btn btn-primary w-100">Add</button>

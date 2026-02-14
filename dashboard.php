@@ -40,6 +40,7 @@ $name = $_SESSION['full_name'];
 
                     <?php if ($role === 'Admin'): ?>
                     <a href="add_medicine.php" class="btn btn-warning btn-lg mb-2">➕ Add Medicine</a>
+                    <a href="manage_users.php" class="btn btn-secondary btn-lg mb-2">👥 Manage Staff</a>
                     <a href="sales_report.php" class="btn btn-info btn-lg mb-2">📊 Sales Reports</a>
                     <?php
 endif; ?>

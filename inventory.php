@@ -71,7 +71,7 @@ if ($result && $result->num_rows > 0) {
         echo "<td>" . htmlspecialchars($row['batch_id']) . "</td>";
         echo "<td class='{$text_class}'>" . htmlspecialchars($row['expiry_date']) . "</td>";
         echo "<td>" . htmlspecialchars($row['stock_qty']) . "</td>";
-        echo "<td>$" . number_format($row['price_per_unit'], 2) . "</td>";
+        echo "<td>₹" . number_format($row['price_per_unit'], 2) . "</td>";
         echo "</tr>";
     }
 }

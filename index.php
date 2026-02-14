@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Pharmacy Management System</title>
+    <title>Login - CentralPharmaCee</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <main class="form-signin">
         <div class="card shadow">
             <div class="card-body">
-                <h1 class="h3 mb-3 fw-normal text-center">Pharmacy Login</h1>
+                <h1 class="h3 mb-3 fw-normal text-center">CentralPharmaCee Login</h1>
 
                 <?php if (!empty($error)): ?>
                 <div class="alert alert-danger" role="alert">

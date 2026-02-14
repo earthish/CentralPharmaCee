@@ -100,14 +100,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 <select name="batch_id" class="form-select" required>
                                     <option value="">-- Choose Medicine --</option>
                                     <?php
-// We pull data from the VIEW, not the raw table!
-$stock = $conn->query("SELECT * FROM View_Available_Stock");
-if ($stock) {
+// DIRECT QUERY (Bypassing the blocked View)
+$sql = "SELECT 
+                                                b.batch_id, 
+                                                b.stock_qty, 
+                                                m.name AS medicine_name, 
+                                                m.price_per_unit
+                                            FROM Batches b
+                                            JOIN Medicines m ON b.med_id = m.med_id
+                                            WHERE b.stock_qty > 0 
+                                            AND b.expiry_date >= CURDATE()";
+
+$stock = $conn->query($sql);
+
+if ($stock->num_rows > 0) {
     while ($row = $stock->fetch_assoc()) {
         echo "<option value='{$row['batch_id']}'>";
         echo "{$row['medicine_name']} - ₹{$row['price_per_unit']} (Stock: {$row['stock_qty']})";
         echo "</option>";
     }
+}
+else {
+    echo "<option value='' disabled>No Stock Available</option>";
 }
 ?>
                                 </select>

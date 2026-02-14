@@ -17,7 +17,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cust_phone = $_POST['customer_phone'];
 
     // A. Check Stock (Using our View!)
-    $check = $conn->query("SELECT stock_qty, price_per_unit FROM View_Available_Stock WHERE batch_id = '$batch_id'");
+    $sql_check = "SELECT b.stock_qty, m.price_per_unit 
+                  FROM Batches b 
+                  JOIN Medicines m ON b.med_id = m.med_id 
+                  WHERE b.batch_id = '$batch_id'";
+
+    $check = $conn->query($sql_check);
 
     if ($check->num_rows > 0) {
         $item = $check->fetch_assoc();

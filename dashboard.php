@@ -36,16 +36,27 @@ $name = $_SESSION['full_name'];
                 <hr>
 
                 <div class="d-grid gap-2 col-md-6 mx-auto">
+
                     <a href="inventory.php" class="btn btn-outline-light btn-lg mb-2">📦 View Inventory</a>
 
-                    <?php if ($role === 'Admin'): ?>
+                    <?php if ($role === 'Admin' || $role === 'Pharmacist'): ?>
                     <a href="add_medicine.php" class="btn btn-warning btn-lg mb-2">➕ Add Medicine</a>
-                    <a href="manage_users.php" class="btn btn-secondary btn-lg mb-2">👥 Manage Staff</a>
                     <a href="sales_report.php" class="btn btn-info btn-lg mb-2">📊 Sales Reports</a>
+
                     <?php
 endif; ?>
 
+                    <?php if ($role === 'Admin'): ?>
+
+                    <a href="manage_users.php" class="btn btn-secondary btn-lg mb-2">👥 Manage Staff</a>
+                    <?php
+endif; ?>
+
+                    <?php if ($role === 'Admin' || $role === 'Billing'): ?>
                     <a href="billing.php" class="btn btn-success btn-lg mb-2">💰 Billing Counter</a>
+                    <?php
+endif; ?>
+
                 </div>
 
                 <hr>

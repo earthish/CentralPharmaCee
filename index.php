@@ -12,8 +12,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Please enter both username and password.";
     }
     else {
-        // Prepare statement to prevent SQL injection
-        $stmt = $conn->prepare("SELECT user_id, username, password_hash, role FROM Users WHERE username = ?");
+        // ADDED 'full_name' to the SELECT query
+        $stmt = $conn->prepare("SELECT user_id, username, password_hash, role, full_name FROM Users WHERE username = ?");
         if ($stmt) {
             $stmt->bind_param("s", $username);
             $stmt->execute();
@@ -22,13 +22,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($result->num_rows === 1) {
                 $user = $result->fetch_assoc();
 
-                // Compare plain text password as requested
                 if ($password === $user['password_hash']) {
-                    // Password is correct, start a new session
                     session_regenerate_id();
                     $_SESSION['user_id'] = $user['user_id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['role'] = $user['role'];
+
+                    // SAVING THE NAME to the Session Badge
+                    $_SESSION['full_name'] = $user['full_name'];
 
                     header("Location: dashboard.php");
                     exit();

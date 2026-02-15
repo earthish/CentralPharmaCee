@@ -1,3 +1,5 @@
+package com.example.centralpharmacee
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,8 +12,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.centralpharmacee.InventoryViewModel
-import com.example.centralpharmacee.Medicine
 
 
 class MainActivity : ComponentActivity() {
@@ -27,18 +27,24 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun InventoryScreen(viewModel: InventoryViewModel = viewModel()) {
-    // Fetch data when the screen opens
     LaunchedEffect(Unit) {
         viewModel.fetchInventory()
     }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = "Pharmacy Stock", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(16.dp))
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = { viewModel.fetchInventory() }) {
+                Text("+") // Or use an Icon
+            }
+        }
+    ) { padding ->
+        Column(modifier = Modifier.padding(padding).padding(16.dp)) {
+            Text(text = "CentralPharmaCee Stock", style = MaterialTheme.typography.headlineMedium)
 
-        if (viewModel.isLoading.value) {
-            CircularProgressIndicator()
-        } else {
+            if (viewModel.isLoading.value) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+
             LazyColumn {
                 items(viewModel.medicineList.value) { medicine ->
                     MedicineCard(medicine)

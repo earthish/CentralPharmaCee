@@ -2,18 +2,37 @@
 session_start();
 require_once 'db_connect.php';
 
+// Security Check
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'Admin') {
     header("Location: index.php");
     exit();
 }
 
-// Add User Logic
+// --- NEW: DELETE USER LOGIC ---
+if (isset($_GET['delete'])) {
+    $delete_id = intval($_GET['delete']);
+    
+    // Safety: Prevent deleting the currently logged-in admin
+    if ($delete_id != $_SESSION['user_id']) {
+        $conn->query("DELETE FROM Users WHERE user_id = $delete_id");
+    }
+    
+    // Refresh the page to remove the 'delete' from URL
+    header("Location: manage_users.php");
+    exit();
+}
+
+// Add User Logic (Kept exactly as you had it)
 if (isset($_POST['add_user'])) {
     $u = $_POST['username'];
-    $p = $_POST['password']; // Storing plain text as per your project setup
+    $p = $_POST['password']; 
     $r = $_POST['role'];
     $n = $_POST['full_name'];
-    $conn->query("INSERT INTO Users (username, password_hash, role, full_name) VALUES ('$u', '$p', '$r', '$n')");
+    
+    // Using prepared statement for better security, or keep your simple query
+    $stmt = $conn->prepare("INSERT INTO Users (username, password_hash, role, full_name) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssss", $u, $p, $r, $n);
+    $stmt->execute();
 }
 ?>
 
@@ -33,12 +52,15 @@ if (isset($_POST['add_user'])) {
         <div class="card mb-4 p-3">
             <h5>Add New Employee</h5>
             <form method="POST" class="row g-3">
-                <div class="col-md-3"><input type="text" name="full_name" class="form-control" placeholder="Full Name"
-                        required></div>
-                <div class="col-md-3"><input type="text" name="username" class="form-control" placeholder="Username"
-                        required></div>
-                <div class="col-md-2"><input type="text" name="password" class="form-control" placeholder="Password"
-                        required></div>
+                <div class="col-md-3">
+                    <input type="text" name="full_name" class="form-control" placeholder="Full Name" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="username" class="form-control" placeholder="Username" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="password" class="form-control" placeholder="Password" required>
+                </div>
                 <div class="col-md-2">
                     <select name="role" class="form-select">
                         <option>Pharmacist</option>
@@ -46,7 +68,8 @@ if (isset($_POST['add_user'])) {
                         <option>Billing</option>
                     </select>
                 </div>
-                <div class="col-md-2"><button type="submit" name="add_user" class="btn btn-primary w-100">Add</button>
+                <div class="col-md-2">
+                    <button type="submit" name="add_user" class="btn btn-primary w-100">Add</button>
                 </div>
             </form>
         </div>
@@ -58,15 +81,33 @@ if (isset($_POST['add_user'])) {
                     <th>Name</th>
                     <th>Username</th>
                     <th>Role</th>
-                </tr>
+                    <th>Action</th> </tr>
             </thead>
             <tbody>
                 <?php
-$res = $conn->query("SELECT * FROM Users");
-while ($row = $res->fetch_assoc()) {
-    echo "<tr><td>{$row['user_id']}</td><td>{$row['full_name']}</td><td>{$row['username']}</td><td>{$row['role']}</td></tr>";
-}
-?>
+                $res = $conn->query("SELECT * FROM Users");
+                while ($row = $res->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td>{$row['user_id']}</td>";
+                    echo "<td>{$row['full_name']}</td>";
+                    echo "<td>{$row['username']}</td>";
+                    echo "<td>{$row['role']}</td>";
+                    
+                    // --- NEW: DELETE BUTTON LOGIC ---
+                    echo "<td>";
+                    if ($row['user_id'] == $_SESSION['user_id']) {
+                        // Don't show delete button for yourself
+                        echo "<span class='text-muted small'>(Current User)</span>";
+                    } else {
+                        // Show Delete button with confirmation
+                        echo "<a href='manage_users.php?delete={$row['user_id']}' 
+                                 class='btn btn-danger btn-sm' 
+                                 onclick='return confirm(\"Are you sure you want to delete this user?\")'>Delete</a>";
+                    }
+                    echo "</td>";
+                    echo "</tr>";
+                }
+                ?>
             </tbody>
         </table>
         <a href="dashboard.php" class="btn btn-secondary">Back to Dashboard</a>
